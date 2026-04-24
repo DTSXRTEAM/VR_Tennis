@@ -3,6 +3,15 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 .utmp/
+<<<<<<< HEAD
+Library/
+Temp/
+Obj/
+Build/
+Builds/
+Logs/
+UserSettings/
+=======
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -10,6 +19,7 @@
 /[Bb]uilds/
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
+>>>>>>> parent of 5ced33a (functions updated)
 *.log
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
