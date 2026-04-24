@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.XR;
-using TMPro;
 
 public class BallSpawnerXR : MonoBehaviour
 {
@@ -15,17 +14,18 @@ public class BallSpawnerXR : MonoBehaviour
     private InputDevice rightController;
     private bool lastTriggerState = false;
 
-    [Header("UI")]
-    public TextMeshPro infoText;   // Only ONE text
-    public string[] shotTexts;         // Values per element
+    [Header("UI Images")]
+    public GameObject[] shotImages;   // Assign images in order
 
     void Start()
-    { 
+    {
         rightController = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
 
-        // ✅ hide text initially
-        if (infoText != null)
-            infoText.gameObject.SetActive(false);
+        // ✅ Hide all images initially
+        for (int i = 0; i < shotImages.Length; i++)
+        {
+            shotImages[i].SetActive(false);
+        }
     }
 
     void Update()
@@ -54,7 +54,7 @@ public class BallSpawnerXR : MonoBehaviour
             Destroy(currentBall);
         }
 
-        int index = currentShotIndex; // store before increment
+        int index = currentShotIndex;
 
         currentBall = Instantiate(ballPrefab, spawnPoint.position, spawnPoint.rotation);
 
@@ -76,12 +76,16 @@ public class BallSpawnerXR : MonoBehaviour
             }
         }
 
-        // ✅ ONLY CHANGE TEXT VALUE
-        if (infoText != null && index < shotTexts.Length)
+        // ✅ IMAGE SWITCH LOGIC
+        ShowImage(index);
+    }
+
+    void ShowImage(int index)
+    {
+        for (int i = 0; i < shotImages.Length; i++)
         {
-            infoText.gameObject.SetActive(true);   // ✅ enable
-            infoText.text = shotTexts[index];      // update value
-        } 
+            shotImages[i].SetActive(i == index);
+        }
     }
 
     Shot GetNextShot()
