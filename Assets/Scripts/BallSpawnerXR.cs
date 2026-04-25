@@ -10,18 +10,19 @@ public class BallSpawnerXR : MonoBehaviour
     private int currentShotIndex = 0;
 
     private GameObject currentBall;
+    public ShotManager shotManager;
 
     private InputDevice rightController;
     private bool lastTriggerState = false;
 
     [Header("UI Images")]
-    public GameObject[] shotImages;   // Assign images in order
+    public GameObject[] shotImages;
 
     void Start()
     {
         rightController = InputDevices.GetDeviceAtXRNode(XRNode.RightHand);
 
-        // ✅ Hide all images initially
+        // Hide all images at start
         for (int i = 0; i < shotImages.Length; i++)
         {
             shotImages[i].SetActive(false);
@@ -66,17 +67,23 @@ public class BallSpawnerXR : MonoBehaviour
         if (rb != null)
         {
             Vector3 dir = spawnPoint.forward;
-            float speed = shot.hitForce;
 
-            rb.linearVelocity = dir.normalized * speed + new Vector3(0, shot.upForce, 0);
+            // ✅ FIXED: Proper direction-based velocity
+            dir.y += shot.upForce;
+            dir = dir.normalized;
+
+            rb.linearVelocity = dir * shot.hitForce;
+
+            // Optional: smoother physics feel
+            rb.useGravity = true;
 
             if (data != null)
             {
-                data.initialSpeed = speed;
+                data.initialSpeed = shot.hitForce;
             }
         }
 
-        // ✅ IMAGE SWITCH LOGIC
+        // UI update
         ShowImage(index);
     }
 
@@ -90,16 +97,16 @@ public class BallSpawnerXR : MonoBehaviour
 
     Shot GetNextShot()
     {
-        if (shotSequence.Length == 0)
-            return new Shot();
-
-        Shot shot = shotSequence[currentShotIndex];
-
-        currentShotIndex++;
-
-        if (currentShotIndex >= shotSequence.Length)
-            currentShotIndex = 0;
-
-        return shot;
+        // Alternate between flat and topspin
+        if (currentShotIndex % 2 == 0)
+        {
+            currentShotIndex++;
+            return shotManager.flat;
+        }
+        else
+        {
+            currentShotIndex++;
+            return shotManager.topSpin;
+        }
     }
 }
