@@ -4,20 +4,29 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    Vector3 initialPos; // ball's initial position
+    public Transform startPoint; // 👈 NEW
+
+    Vector3 initialPos;
 
     private void Start()
     {
-        initialPos = transform.position; // default it to where we first place it in the scene
+        if (startPoint != null)
+        {
+            initialPos = startPoint.position;
+            transform.position = startPoint.position; // 👈 start here
+        }
+        else
+        {
+            initialPos = transform.position;
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.CompareTag("Wall")) // if the ball hits a wall
+        if (collision.transform.CompareTag("Wall"))
         {
-            GetComponent<Rigidbody>().linearVelocity = Vector3.zero; // reset it's velocity to 0 so it doesn't move anymore
-            transform.position = initialPos; // reset it's position 
+            GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+            transform.position = initialPos;
         }
     }
-
 }
